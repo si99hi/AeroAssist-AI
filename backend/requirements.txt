@@ -17,14 +17,13 @@ langchain>=0.3.14
 langchain-core>=0.3.28
 langchain-community>=0.3.14
 langchain-google-genai>=2.0.8
-langchain-huggingface>=0.1.2
 langchain-text-splitters>=0.3.4
 langgraph>=0.2.60
 mcp>=1.1.0
 
-# RAG
+# RAG (fastembed — no PyTorch; sentence-transformers pulls ~500MB+ and hangs on Windows)
 faiss-cpu>=1.9.0
-sentence-transformers>=3.3.1
+fastembed>=0.6.0
 pypdf>=5.1.0
 
 # Database drivers

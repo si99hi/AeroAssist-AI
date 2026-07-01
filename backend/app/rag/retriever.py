@@ -6,8 +6,8 @@ from pathlib import Path
 from typing import Any
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from app.config import get_settings
@@ -15,7 +15,7 @@ from app.config import get_settings
 settings = get_settings()
 
 _vector_store: FAISS | None = None
-_embeddings: HuggingFaceEmbeddings | None = None
+_embeddings: FastEmbedEmbeddings | None = None
 
 FALLBACK_DOCS = [
     {
@@ -41,10 +41,10 @@ FALLBACK_DOCS = [
 ]
 
 
-def _get_embeddings() -> HuggingFaceEmbeddings:
+def _get_embeddings() -> FastEmbedEmbeddings:
     global _embeddings
     if _embeddings is None:
-        _embeddings = HuggingFaceEmbeddings(model_name=settings.embedding_model)
+        _embeddings = FastEmbedEmbeddings(model_name=settings.embedding_model)
     return _embeddings
 
 

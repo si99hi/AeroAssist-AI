@@ -49,7 +49,9 @@ cp .env.example .env
 cd backend
 python -m venv .venv
 .venv\Scripts\activate        # Windows
-pip install -r requirements.txt
+pip install --upgrade pip
+pip install --no-compile -r requirements.txt   # --no-compile avoids a Windows pip bug
+set PYTHONPATH=%CD%            # Windows — required so `app` package is found
 uvicorn app.main:app --reload
 ```
 
@@ -99,6 +101,21 @@ docker compose up --build
 | DELETE | `/documents/{id}` | Delete document |
 | POST | `/documents/rebuild` | Rebuild FAISS index |
 | GET | `/analytics` | Tool usage stats |
+
+## Troubleshooting install (Windows)
+
+If `pip install` appears stuck or fails with `AssertionError` during install:
+
+1. **Kill stuck Python processes** — a failed install can lock `.venv` files
+2. **Delete and recreate the venv**: `rmdir /s /q .venv` then `python -m venv .venv`
+3. **Use `--no-compile`** — avoids a known Windows pip bug when writing `.pyc` files
+4. **We use `fastembed` instead of `sentence-transformers`** — the latter pulls PyTorch (~500MB+) and often hangs silently on Windows
+
+```bash
+pip install --no-compile -r requirements.txt
+```
+
+First run downloads the embedding model (~30MB) from HuggingFace — this is normal.
 
 ## Database
 
