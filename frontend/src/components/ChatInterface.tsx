@@ -2,10 +2,10 @@ import { useState } from "react";
 import type { ChatResponse } from "../types";
 
 const SUGGESTIONS = [
-  "Why is UA451 delayed?",
-  "Can I carry two bags?",
-  "What is the weather at SFO?",
-  "Can I rebook after cancellation on UA100?",
+  "Why is AI101 delayed?",
+  "Can I carry pets in cabin on Air India?",
+  "What is the weather at DEL?",
+  "Can I rebook after cancellation on AI302?",
 ];
 
 interface Props {

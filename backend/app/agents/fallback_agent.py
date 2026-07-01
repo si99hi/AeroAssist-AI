@@ -62,8 +62,10 @@ def answer_question(question: str) -> dict:
                 f"visibility {weather_info['visibility_km']}km, storm risk {weather_info['storm_risk']}."
             )
 
+    airline = "Air India"
+
     if any(word in q_lower for word in POLICY_KEYWORDS):
-        results = search_policy(question)
+        results = search_policy(question, airline=airline)
         used_tools.append("search_policy")
         for doc in results:
             cite = doc.get("citation", {})
@@ -77,7 +79,7 @@ def answer_question(question: str) -> dict:
     if not parts:
         parts.append(
             "I couldn't tell which tool to use. Try asking about a flight number "
-            "(e.g. UA451), an airport's weather, or an airline policy."
+            "(e.g. AI101), an airport's weather, or an airline policy."
         )
 
     return {"answer": " ".join(parts), "tools_used": used_tools, "citations": citations}

@@ -33,7 +33,7 @@ def list_documents(current_user: User = Depends(get_current_user), db: Session =
 @router.post("/upload")
 async def upload_document(
     file: UploadFile = File(...),
-    airline: str = Form(default="United"),
+    airline: str = Form(default="Air India"),
     category: str = Form(default="General"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -89,7 +89,7 @@ def delete_document(doc_id: int, current_user: User = Depends(get_current_user),
 
 @router.post("/rebuild")
 def rebuild_index(
-    airline: str = "United",
+    airline: str = "Air India",
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):

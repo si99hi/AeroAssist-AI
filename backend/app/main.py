@@ -12,15 +12,65 @@ from app.database import init_db
 settings = get_settings()
 
 
+def sync_documents_to_db(db):
+    from pathlib import Path
+    from app.models.document import UploadedDocument
+    
+    docs_dir = Path(settings.documents_dir)
+    if not docs_dir.exists():
+        return
+        
+    for file_path in docs_dir.glob("**/*"):
+        if file_path.is_file():
+            filename = file_path.name
+            # Check if exists in db
+            exists = db.query(UploadedDocument).filter(UploadedDocument.filename == filename).first()
+            if not exists:
+                f_lower = filename.lower()
+                # Airline heuristic: default to Air India for pdfs/passenger charter
+                if filename in {"baggage_policy.txt", "cancellation_policy.txt", "delay_compensation.txt"}:
+                    airline = "United"
+                else:
+                    airline = "Air India"
+                
+                # Category heuristic
+                if "baggage" in f_lower:
+                    category = "Baggage"
+                elif "cancellation" in f_lower or "booking" in f_lower or "schedule-change" in f_lower:
+                    category = "Cancellation"
+                elif "delay" in f_lower or "irrops" in f_lower or "rights" in f_lower:
+                    category = "Delays"
+                else:
+                    category = "General"
+                    
+                doc = UploadedDocument(
+                    airline=airline,
+                    filename=filename,
+                    category=category,
+                    embedding_status="ready",
+                )
+                db.add(doc)
+    db.commit()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
     try:
+        from app.database import SessionLocal
         from app.rag.retriever import get_vector_store
-
-        get_vector_store(settings.default_airline)
-    except Exception:
-        pass
+        
+        # Sync orphaned files on disk to DB
+        db = SessionLocal()
+        try:
+            sync_documents_to_db(db)
+        finally:
+            db.close()
+            
+        # Build or load vector store for Air India
+        get_vector_store("Air India")
+    except Exception as e:
+        print("Error during startup sync/indexing:", e)
     yield
 
 

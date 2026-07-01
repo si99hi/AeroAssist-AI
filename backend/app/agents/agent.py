@@ -18,10 +18,10 @@ from app.services.tools import check_weather, get_flight_status, search_policy
 
 settings = get_settings()
 
-SYSTEM_PROMPT = """You are AeroAssist AI, an airline operations assistant for United Airlines.
+SYSTEM_PROMPT = """You are AeroAssist AI, an airline operations assistant for Air India.
 You have three tools:
-1. get_flight_status - for flight numbers like UA451
-2. check_weather - for airport codes like ORD, SFO
+1. get_flight_status - for Air India flight numbers like AI101
+2. check_weather - for airport codes like DEL, BOM
 3. search_policy - for baggage, cancellation, rebooking, compensation questions
 
 Choose only the tools needed. For delay questions, check flight status AND weather at departure airport.
@@ -31,22 +31,22 @@ Be concise and helpful."""
 
 @tool
 def get_flight_status_tool(flight_number: str) -> str:
-    """Get status, departure, arrival, delay, and gate for a flight number like UA451."""
+    """Get status, departure, arrival, delay, and gate for a flight number like AI101."""
     result = get_flight_status(flight_number)
     return json.dumps(result)
 
 
 @tool
 def check_weather_tool(airport_code: str) -> str:
-    """Get temperature, rain, visibility, and storm risk for an airport code like ORD or SFO."""
+    """Get temperature, rain, visibility, and storm risk for an airport code like DEL or BOM."""
     result = check_weather(airport_code)
     return json.dumps(result)
 
 
 @tool
-def search_policy_tool(query: str) -> str:
-    """Search United Airlines policy documents for baggage, cancellation, rebooking, compensation."""
-    results = search_policy(query)
+def search_policy_tool(query: str, airline: str = "Air India") -> str:
+    """Search Air India policy documents for baggage, cancellation, rebooking, compensation."""
+    results = search_policy(query, airline=airline)
     return json.dumps(results)
 
 

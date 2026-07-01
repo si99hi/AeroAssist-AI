@@ -14,7 +14,7 @@ from app.config import get_settings
 
 settings = get_settings()
 
-_vector_store: FAISS | None = None
+_vector_stores: dict[str, FAISS] = {}
 _embeddings: FastEmbedEmbeddings | None = None
 
 FALLBACK_DOCS = [
@@ -38,6 +38,26 @@ FALLBACK_DOCS = [
         "control may be eligible for meal vouchers and, in some cases, hotel accommodation.",
         "metadata": {"airline": "United", "document": "Delay Compensation", "page": 1, "category": "Delays"},
     },
+    {
+        "title": "Air India Baggage Policy",
+        "text": "Air India allows economy class passengers to carry one piece of hand baggage up to 8kg. "
+        "Checked baggage allowance varies by route and cabin class. Overweight/oversized baggage "
+        "incurs excess baggage charges at the airport.",
+        "metadata": {"airline": "Air India", "document": "Baggage Policy", "page": 1, "category": "Baggage"},
+    },
+    {
+        "title": "Air India Cancellation & Rebooking",
+        "text": "If Air India cancels your flight, you are entitled to a full refund or a free rebooking "
+        "on the next available Air India flight. Voluntary changes or cancellations are subject to "
+        "cancellation/change fees depending on the ticket fare rules.",
+        "metadata": {"airline": "Air India", "document": "Cancellation Policy", "page": 1, "category": "Cancellation"},
+    },
+    {
+        "title": "Air India Delay Compensation",
+        "text": "For delays within Air India's control, passengers delayed over 3 hours are eligible for "
+        "meals and refreshments. In case of overnight delays, hotel accommodation is provided.",
+        "metadata": {"airline": "Air India", "document": "Delay Compensation", "page": 1, "category": "Delays"},
+    },
 ]
 
 
@@ -48,11 +68,24 @@ def _get_embeddings() -> FastEmbedEmbeddings:
     return _embeddings
 
 
-def _index_path(airline: str = "United") -> Path:
+def _index_path(airline: str = "Air India") -> Path:
     return Path(settings.faiss_dir) / airline.lower().replace(" ", "_")
 
 
-def build_vector_index(airline: str = "United") -> FAISS:
+def _file_belongs_to_airline(file_path: Path, airline: str) -> bool:
+    filename = file_path.name
+    a_lower = airline.lower().replace(" ", "")
+    f_lower = filename.lower()
+
+    if a_lower == "united":
+        return filename in {"baggage_policy.txt", "cancellation_policy.txt", "delay_compensation.txt"}
+    elif a_lower in {"airindia", "air_india"}:
+        return "airindia" in f_lower or "air-india" in f_lower or "ai-" in f_lower or "passenger-charter" in f_lower
+
+    return a_lower in f_lower.replace("_", "").replace("-", "")
+
+
+def build_vector_index(airline: str = "Air India") -> FAISS:
     """Load documents, chunk, embed, and save FAISS index."""
     from langchain_core.documents import Document
 
@@ -69,6 +102,11 @@ def build_vector_index(airline: str = "United") -> FAISS:
     all_docs: list[Document] = []
 
     for file_path in docs_dir.glob("**/*"):
+        if file_path.is_dir():
+            continue
+        if not _file_belongs_to_airline(file_path, airline):
+            continue
+
         if file_path.suffix.lower() == ".pdf":
             loader = PyPDFLoader(str(file_path))
             loaded = loader.load()
@@ -88,9 +126,10 @@ def build_vector_index(airline: str = "United") -> FAISS:
 
     if not all_docs:
         for item in FALLBACK_DOCS:
-            all_docs.append(
-                Document(page_content=item["text"], metadata=item["metadata"])
-            )
+            if item["metadata"]["airline"].lower() == airline.lower():
+                all_docs.append(
+                    Document(page_content=item["text"], metadata=item["metadata"])
+                )
 
     chunks = splitter.split_documents(all_docs)
     embeddings = _get_embeddings()
@@ -105,27 +144,30 @@ def build_vector_index(airline: str = "United") -> FAISS:
     return store
 
 
-def get_vector_store(airline: str = "United") -> FAISS | None:
+def get_vector_store(airline: str = "Air India") -> FAISS | None:
     """Load FAISS index from disk, building it if missing."""
-    global _vector_store
+    global _vector_stores
+    key = airline.lower()
     index_dir = _index_path(airline)
 
-    if _vector_store is not None and index_dir.exists():
-        return _vector_store
+    if key in _vector_stores and index_dir.exists():
+        return _vector_stores[key]
 
     if index_dir.exists() and (index_dir / "index.faiss").exists():
-        _vector_store = FAISS.load_local(
+        store = FAISS.load_local(
             str(index_dir),
             _get_embeddings(),
             allow_dangerous_deserialization=True,
         )
-        return _vector_store
+        _vector_stores[key] = store
+        return store
 
-    _vector_store = build_vector_index(airline)
-    return _vector_store
+    store = build_vector_index(airline)
+    _vector_stores[key] = store
+    return store
 
 
-def search_documents(query: str, top_k: int = 3, airline: str = "United") -> list[dict[str, Any]]:
+def search_documents(query: str, top_k: int = 3, airline: str = "Air India") -> list[dict[str, Any]]:
     """Retrieve top-k policy chunks with citations."""
     try:
         store = get_vector_store(airline)
@@ -149,15 +191,18 @@ def search_documents(query: str, top_k: int = 3, airline: str = "United") -> lis
                     },
                 }
             )
-        return output or _keyword_fallback(query, top_k)
+        return output or _keyword_fallback(query, top_k, airline=airline)
     except Exception:
-        return _keyword_fallback(query, top_k)
+        return _keyword_fallback(query, top_k, airline=airline)
 
 
-def _keyword_fallback(query: str, top_k: int) -> list[dict[str, Any]]:
+def _keyword_fallback(query: str, top_k: int, airline: str = "Air India") -> list[dict[str, Any]]:
     query_words = set(query.lower().split())
     scored = []
     for doc in FALLBACK_DOCS:
+        doc_airline = doc.get("metadata", {}).get("airline", "United")
+        if doc_airline.lower() != airline.lower():
+            continue
         doc_words = set(doc["text"].lower().split())
         overlap = len(query_words & doc_words)
         if overlap > 0:

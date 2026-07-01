@@ -142,9 +142,9 @@ def check_weather(airport_code: str) -> dict[str, Any]:
     }
 
 
-def search_policy(query: str, top_k: int | None = None) -> list[dict[str, Any]]:
+def search_policy(query: str, airline: str = "Air India", top_k: int | None = None) -> list[dict[str, Any]]:
     """Search airline policy documents. Uses FAISS when available, keyword fallback otherwise."""
     from app.rag.retriever import search_documents
 
     k = top_k or settings.rag_top_k
-    return search_documents(query, top_k=k)
+    return search_documents(query, top_k=k, airline=airline)
