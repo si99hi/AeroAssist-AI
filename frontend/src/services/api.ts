@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+const API_BASE = (import.meta as any).env.VITE_API_URL || "/api";
 
 const api = axios.create({ baseURL: API_BASE });
 
@@ -31,7 +31,7 @@ export const chatApi = {
 
 export const documentsApi = {
   list: () => api.get("/documents").then((r) => r.data),
-  upload: (file: File, airline = "United", category = "General") => {
+  upload: (file: File, airline = "Air India", category = "General") => {
     const form = new FormData();
     form.append("file", file);
     form.append("airline", airline);
@@ -39,7 +39,7 @@ export const documentsApi = {
     return api.post("/documents/upload", form).then((r) => r.data);
   },
   delete: (id: number) => api.delete(`/documents/${id}`).then((r) => r.data),
-  rebuild: (airline = "United") =>
+  rebuild: (airline = "Air India") =>
     api.post(`/documents/rebuild?airline=${airline}`).then((r) => r.data),
 };
 

@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/components/chatinterface.tsx","./src/components/protectedroute.tsx","./src/pages/admin.tsx","./src/pages/analytics.tsx","./src/pages/dashboard.tsx","./src/pages/login.tsx","./src/pages/register.tsx","./src/services/api.ts","./src/types/index.ts"],"version":"5.9.3"}

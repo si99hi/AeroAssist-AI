@@ -4,25 +4,28 @@
 <meta charset="UTF-8" />
 <title>AeroAssist AI</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
   :root {
-    --bg: #0f1115;
-    --panel: #171a21;
-    --border: #262b35;
-    --text: #e7e9ee;
-    --muted: #8b93a3;
-    --accent: #3b82f6;
-    --user-bubble: #1f2937;
-    --bot-bubble: #12213a;
+    --bg: #FFFFFF;
+    --panel: #FAFAFA;
+    --border: #F1F1F1;
+    --text: #111111;
+    --muted: #666666;
+    --accent: #E53935;
+    --user-bubble: #FAFAFA;
+    --bot-bubble: #FFFFFF;
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--text);
     display: flex;
     justify-content: center;
-    padding: 32px 16px;
+    padding: 40px 16px;
+    -webkit-font-smoothing: antialiased;
   }
   .app {
     width: 100%;
@@ -32,94 +35,147 @@
     height: 85vh;
   }
   h1 {
-    font-size: 20px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     margin: 0 0 4px;
+    color: var(--text);
   }
   .subtitle {
     color: var(--muted);
     font-size: 13px;
-    margin: 0 0 16px;
+    margin: 0 0 24px;
   }
   .examples {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
   .example-btn {
     background: var(--panel);
     border: 1px solid var(--border);
     color: var(--muted);
-    border-radius: 999px;
-    padding: 6px 12px;
+    border-radius: 12px;
+    padding: 8px 14px;
     font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
+    transition: all 0.2s ease;
   }
-  .example-btn:hover { color: var(--text); border-color: var(--accent); }
+  .example-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(229, 57, 53, 0.04);
+  }
   .messages {
     flex: 1;
     overflow-y: auto;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    background: var(--panel);
+    border-radius: 20px;
+    padding: 20px;
+    background: #FFFFFF;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   }
   .msg {
     max-width: 85%;
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 14px 18px;
+    border-radius: 18px;
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
     white-space: pre-wrap;
+    border: 1px solid var(--border);
   }
   .msg.user {
     align-self: flex-end;
     background: var(--user-bubble);
+    border-top-right-radius: 2px;
   }
   .msg.bot {
     align-self: flex-start;
     background: var(--bot-bubble);
+    border-top-left-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01);
   }
   .msg .tools {
-    display: block;
-    margin-top: 6px;
-    font-size: 11px;
-    color: var(--muted);
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: rgba(229, 57, 53, 0.05);
+    border: 1px solid rgba(229, 57, 53, 0.1);
+    padding: 2px 8px;
+    border-radius: 99px;
   }
   form {
     display: flex;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 16px;
   }
   input[type="text"] {
     flex: 1;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 16px;
+    padding: 14px 18px;
     color: var(--text);
     font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
   }
-  input[type="text"]:focus { outline: none; border-color: var(--accent); }
+  input[type="text"]:focus {
+    background: #FFFFFF;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
   button[type="submit"] {
     background: var(--accent);
     border: none;
-    border-radius: 8px;
-    padding: 0 18px;
+    border-radius: 16px;
+    padding: 0 24px;
     color: white;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
   }
-  button[type="submit"]:disabled { opacity: 0.5; cursor: default; }
+  button[type="submit"]:hover {
+    background: #D32F2F;
+  }
+  button[type="submit"]:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
   .status {
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 500;
     margin-top: 8px;
     color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  .status.error { color: #f87171; }
+  .status::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1s infinite alternate;
+  }
+  .status.error { color: var(--accent); }
+  .status.error::before { background: var(--accent); }
+  @keyframes pulse {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+  }
 </style>
 </head>
 <body>

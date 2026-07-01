@@ -21,38 +21,47 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md border border-border rounded-2xl p-8 bg-panel">
-        <h1 className="text-2xl font-semibold mb-1">AeroAssist AI</h1>
-        <p className="text-gray-400 text-sm mb-6">Sign in to your account</p>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-white">
+      <div className="w-full max-w-sm border border-[#F1F1F1] rounded-3xl p-8 bg-[#FAFAFA] shadow-soft">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-[#111111] mb-2">AeroAssist AI</h1>
+          <p className="text-[#666666] text-sm">Sign in to your dashboard</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-[#0f1115] border border-border rounded-lg px-4 py-3 text-sm"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-[#0f1115] border border-border rounded-lg px-4 py-3 text-sm"
-            required
-          />
-          {error && <p className="text-red-400 text-sm">{error}</p>}
-          <button type="submit" className="w-full bg-accent py-3 rounded-lg font-medium">
+          <div>
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full bg-white border border-[#F1F1F1] rounded-2xl px-4 py-3.5 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#E53935] focus:ring-1 focus:ring-[#E53935] transition-all"
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full bg-white border border-[#F1F1F1] rounded-2xl px-4 py-3.5 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#E53935] focus:ring-1 focus:ring-[#E53935] transition-all"
+              required
+            />
+          </div>
+          {error && <p className="text-[#E53935] text-xs font-medium pl-1">{error}</p>}
+          <button
+            type="submit"
+            className="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 shadow-sm"
+          >
             Sign in
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
-          No account?{" "}
-          <Link to="/register" className="text-accent hover:underline">
-            Register
+        <p className="text-center text-sm text-[#666666] mt-8">
+          New to the platform?{" "}
+          <Link to="/register" className="text-[#E53935] hover:text-[#D32F2F] font-semibold transition-colors">
+            Create an account
           </Link>
         </p>
       </div>
