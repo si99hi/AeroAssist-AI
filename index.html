@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>AeroAssist AI</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --border: #262b35;
+    --text: #e7e9ee;
+    --muted: #8b93a3;
+    --accent: #3b82f6;
+    --user-bubble: #1f2937;
+    --bot-bubble: #12213a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+  .app {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    height: 85vh;
+  }
+  h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 16px;
+  }
+  .examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .example-btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .example-btn:hover { color: var(--text); border-color: var(--accent); }
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--user-bubble);
+  }
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--bot-bubble);
+  }
+  .msg .tools {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  form {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  input[type="text"] {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--text);
+    font-size: 14px;
+  }
+  input[type="text"]:focus { outline: none; border-color: var(--accent); }
+  button[type="submit"] {
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 0 18px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  button[type="submit"]:disabled { opacity: 0.5; cursor: default; }
+  .status {
+    font-size: 12px;
+    margin-top: 8px;
+    color: var(--muted);
+  }
+  .status.error { color: #f87171; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1>AeroAssist AI</h1>
+    <p class="subtitle">Ask about a flight, an airport's weather, or airline policy.</p>
+
+    <div class="examples">
+      <button class="example-btn" type="button" data-q="Why is UA451 delayed?">Why is UA451 delayed?</button>
+      <button class="example-btn" type="button" data-q="Can I carry two bags?">Can I carry two bags?</button>
+      <button class="example-btn" type="button" data-q="What is the weather at SFO?">Weather at SFO?</button>
+      <button class="example-btn" type="button" data-q="Can I rebook after cancellation on UA100?">Rebook UA100?</button>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <form id="chat-form">
+      <input type="text" id="question" placeholder="Ask a question..." autocomplete="off" required />
+      <button type="submit" id="send-btn">Send</button>
+    </form>
+    <p class="status" id="status"></p>
+  </div>
+
+<script>
+  // Point this at wherever the FastAPI backend is running.
+  const API_URL = "http://127.0.0.1:8000/chat";
+
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("question");
+  const messagesEl = document.getElementById("messages");
+  const statusEl = document.getElementById("status");
+  const sendBtn = document.getElementById("send-btn");
+
+  function addMessage(text, sender, toolsUsed) {
+    const el = document.createElement("div");
+    el.className = "msg " + sender;
+    el.textContent = text;
+    if (toolsUsed && toolsUsed.length > 0) {
+      const toolsEl = document.createElement("span");
+      toolsEl.className = "tools";
+      toolsEl.textContent = "tools used: " + toolsUsed.join(", ");
+      el.appendChild(toolsEl);
+    }
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  async function askQuestion(question) {
+    addMessage(question, "user");
+    input.value = "";
+    sendBtn.disabled = true;
+    statusEl.textContent = "Thinking...";
+    statusEl.className = "status";
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Server returned " + response.status);
+      }
+
+      const data = await response.json();
+      addMessage(data.answer, "bot", data.tools_used);
+      statusEl.textContent = "";
+    } catch (err) {
+      statusEl.textContent = "Couldn't reach the backend. Is it running at " + API_URL + "?";
+      statusEl.className = "status error";
+    } finally {
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const question = input.value.trim();
+    if (question) askQuestion(question);
+  });
+
+  document.querySelectorAll(".example-btn").forEach((btn) => {
+    btn.addEventListener("click", () => askQuestion(btn.dataset.q));
+  });
+</script>
+</body>
+</html>

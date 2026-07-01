@@ -1,0 +1,31 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+sqlalchemy>=2.0.36
+alembic>=1.14.0
+httpx>=0.28.0
+python-dotenv>=1.0.1
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.1,<4.1
+python-multipart>=0.0.17
+email-validator>=2.2.0
+
+# AI stack
+langchain>=0.3.14
+langchain-core>=0.3.28
+langchain-community>=0.3.14
+langchain-google-genai>=2.0.8
+langchain-huggingface>=0.1.2
+langchain-text-splitters>=0.3.4
+langgraph>=0.2.60
+mcp>=1.1.0
+
+# RAG
+faiss-cpu>=1.9.0
+sentence-transformers>=3.3.1
+pypdf>=5.1.0
+
+# Database drivers
+psycopg2-binary>=2.9.10
