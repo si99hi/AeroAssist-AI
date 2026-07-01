@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
-from langchain_community.embeddings import FastEmbedEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -15,7 +14,7 @@ from app.config import get_settings
 settings = get_settings()
 
 _vector_stores: dict[str, FAISS] = {}
-_embeddings: FastEmbedEmbeddings | None = None
+_embeddings: Any = None
 
 FALLBACK_DOCS = [
     {
@@ -61,10 +60,22 @@ FALLBACK_DOCS = [
 ]
 
 
-def _get_embeddings() -> FastEmbedEmbeddings:
+def _get_embeddings() -> Any:
     global _embeddings
     if _embeddings is None:
-        _embeddings = FastEmbedEmbeddings(model_name=settings.embedding_model)
+        if settings.gemini_api_key:
+            from langchain_google_genai import GoogleGenerativeAIEmbeddings
+            _embeddings = GoogleGenerativeAIEmbeddings(
+                model="models/text-embedding-004",
+                google_api_key=settings.gemini_api_key,
+            )
+        else:
+            from langchain_community.embeddings import FastEmbedEmbeddings
+            _embeddings = FastEmbedEmbeddings(
+                model_name=settings.embedding_model,
+                threads=1,
+                max_length=256,
+            )
     return _embeddings
 
 
@@ -154,13 +165,16 @@ def get_vector_store(airline: str = "Air India") -> FAISS | None:
         return _vector_stores[key]
 
     if index_dir.exists() and (index_dir / "index.faiss").exists():
-        store = FAISS.load_local(
-            str(index_dir),
-            _get_embeddings(),
-            allow_dangerous_deserialization=True,
-        )
-        _vector_stores[key] = store
-        return store
+        try:
+            store = FAISS.load_local(
+                str(index_dir),
+                _get_embeddings(),
+                allow_dangerous_deserialization=True,
+            )
+            _vector_stores[key] = store
+            return store
+        except Exception as e:
+            print(f"Error loading FAISS index for {airline}, rebuilding: {e}")
 
     store = build_vector_index(airline)
     _vector_stores[key] = store
