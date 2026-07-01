@@ -15,6 +15,9 @@ AI-powered airline operations assistant demonstrating MCP, LangChain, LangGraph,
 ### Telemetry
 ![Chat Interface](assets/Screenshot%202026-07-01%20205159.png)
 
+### Add files
+![files](assets/Screenshot%202026-07-01%20212554.png)
+
 ## Architecture
 
 ```
