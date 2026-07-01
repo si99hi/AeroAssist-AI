@@ -2,6 +2,19 @@
 
 AI-powered airline operations assistant demonstrating MCP, LangChain, LangGraph, RAG, FastAPI, React, FAISS, and JWT authentication.
 
+## Screenshots
+
+### Login / Authentication
+![Landing Page](assets/Screenshot%202026-07-01%20204857.png)
+
+### Chat Interface
+![Login](assets/Screenshot%202026-07-01%20205105.png)
+
+![Dashboard](assets/Screenshot%202026-07-01%20205152.png)
+
+### Telemetry
+![Chat Interface](assets/Screenshot%202026-07-01%20205159.png)
+
 ## Architecture
 
 ```
