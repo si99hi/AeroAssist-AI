@@ -66,7 +66,7 @@ def _get_embeddings() -> Any:
         if settings.gemini_api_key:
             from langchain_google_genai import GoogleGenerativeAIEmbeddings
             _embeddings = GoogleGenerativeAIEmbeddings(
-                model="models/text-embedding-004",
+                model="models/embedding-001",
                 google_api_key=settings.gemini_api_key,
             )
         else:
