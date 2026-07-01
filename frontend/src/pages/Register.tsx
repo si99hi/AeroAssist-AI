@@ -23,56 +23,60 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-white">
-      <div className="w-full max-w-sm border border-[#F1F1F1] rounded-3xl p-8 bg-[#FAFAFA] shadow-soft">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-[#111111] mb-2">Create Account</h1>
-          <p className="text-[#666666] text-sm">Join the AeroAssist platform</p>
+      <div className="w-full max-w-sm border border-[#EFEFEF] p-10 bg-white">
+        <div className="mb-10 text-center">
+          <h1 className="serif-heading text-4xl font-normal tracking-tight text-[#111111] mb-3">
+            AeroAssist
+          </h1>
+          <p className="text-[#666666] text-xs font-normal tracking-widest uppercase">
+            Operations & Intelligence
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <input
               type="text"
-              placeholder="Full name"
+              placeholder="Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full bg-white border border-[#F1F1F1] rounded-2xl px-4 py-3.5 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#E53935] focus:ring-1 focus:ring-[#E53935] transition-all"
+              className="w-full bg-white border border-[#EFEFEF] px-4 py-3 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#B22222] transition-colors font-sans"
               required
             />
           </div>
           <div>
             <input
               type="email"
-              placeholder="Email address"
+              placeholder="Email Address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white border border-[#F1F1F1] rounded-2xl px-4 py-3.5 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#E53935] focus:ring-1 focus:ring-[#E53935] transition-all"
+              className="w-full bg-white border border-[#EFEFEF] px-4 py-3 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#B22222] transition-colors font-sans"
               required
             />
           </div>
           <div>
             <input
               type="password"
-              placeholder="Password (min 6 characters)"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white border border-[#F1F1F1] rounded-2xl px-4 py-3.5 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#E53935] focus:ring-1 focus:ring-[#E53935] transition-all"
+              className="w-full bg-white border border-[#EFEFEF] px-4 py-3 text-sm text-[#111111] placeholder-[#999999] focus:outline-none focus:border-[#B22222] transition-colors font-sans"
               minLength={6}
               required
             />
           </div>
-          {error && <p className="text-[#E53935] text-xs font-medium pl-1">{error}</p>}
+          {error && <p className="text-[#B22222] text-xs font-medium pl-1">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-[#E53935] hover:bg-[#D32F2F] text-white py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 shadow-sm"
+            className="w-full bg-[#111111] hover:bg-[#B22222] text-white py-3.5 font-semibold text-xs tracking-wider uppercase transition-colors"
           >
-            Register
+            Create Account
           </button>
         </form>
 
-        <p className="text-center text-sm text-[#666666] mt-8">
+        <p className="text-center text-xs text-[#666666] mt-10 tracking-wide">
           Already have an account?{" "}
-          <Link to="/login" className="text-[#E53935] hover:text-[#D32F2F] font-semibold transition-colors">
+          <Link to="/login" className="text-[#B22222] hover:underline font-semibold">
             Sign in
           </Link>
         </p>

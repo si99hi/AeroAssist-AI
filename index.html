@@ -4,15 +4,15 @@
 <meta charset="UTF-8" />
 <title>AeroAssist AI</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
   :root {
     --bg: #FFFFFF;
-    --panel: #FAFAFA;
-    --border: #F1F1F1;
+    --panel: #FFFFFF;
+    --border: #EFEFEF;
     --text: #111111;
     --muted: #666666;
-    --accent: #E53935;
+    --accent: #B22222;
     --user-bubble: #FAFAFA;
     --bot-bubble: #FFFFFF;
   }
@@ -24,7 +24,7 @@
     color: var(--text);
     display: flex;
     justify-content: center;
-    padding: 40px 16px;
+    padding: 60px 16px;
     -webkit-font-smoothing: antialiased;
   }
   .app {
@@ -35,29 +35,35 @@
     height: 85vh;
   }
   h1 {
-    font-size: 26px;
-    font-weight: 700;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 36px;
+    font-weight: 400;
     letter-spacing: -0.02em;
-    margin: 0 0 4px;
+    margin: 0 0 8px;
     color: var(--text);
+    text-align: center;
   }
   .subtitle {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-style: italic;
     color: var(--muted);
     font-size: 13px;
-    margin: 0 0 24px;
+    margin: 0 0 32px;
+    text-align: center;
   }
   .examples {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 24px;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 32px;
   }
   .example-btn {
     background: var(--panel);
     border: 1px solid var(--border);
     color: var(--muted);
-    border-radius: 12px;
-    padding: 8px 14px;
+    border-radius: 0px;
+    padding: 10px 16px;
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
@@ -66,79 +72,70 @@
   .example-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
-    background: rgba(229, 57, 53, 0.04);
   }
   .messages {
     flex: 1;
     overflow-y: auto;
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 20px;
+    border-radius: 0px;
+    padding: 24px;
     background: #FFFFFF;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    gap: 20px;
   }
   .msg {
-    max-width: 85%;
-    padding: 14px 18px;
-    border-radius: 18px;
+    max-width: 90%;
+    padding: 18px 22px;
+    border-radius: 0px;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
     white-space: pre-wrap;
     border: 1px solid var(--border);
   }
   .msg.user {
     align-self: flex-end;
     background: var(--user-bubble);
-    border-top-right-radius: 2px;
+    border-color: rgba(178, 34, 34, 0.2);
   }
   .msg.bot {
     align-self: flex-start;
     background: var(--bot-bubble);
-    border-top-left-radius: 2px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.01);
   }
   .msg .tools {
     display: inline-block;
-    margin-top: 8px;
-    font-size: 10px;
-    font-weight: 700;
+    margin-top: 10px;
+    font-size: 9px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     color: var(--accent);
-    background: rgba(229, 57, 53, 0.05);
-    border: 1px solid rgba(229, 57, 53, 0.1);
-    padding: 2px 8px;
-    border-radius: 99px;
+    border-bottom: 1px border var(--border);
   }
   form {
     display: flex;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 20px;
   }
   input[type="text"] {
     flex: 1;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 18px;
+    border-radius: 99px;
+    padding: 16px 22px;
     color: var(--text);
     font-size: 14px;
     outline: none;
     transition: all 0.2s ease;
   }
   input[type="text"]:focus {
-    background: #FFFFFF;
     border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
   }
   button[type="submit"] {
-    background: var(--accent);
+    background: #111111;
     border: none;
-    border-radius: 16px;
-    padding: 0 24px;
+    border-radius: 99px;
+    padding: 0 28px;
     color: white;
     font-size: 14px;
     font-weight: 600;
@@ -146,36 +143,21 @@
     transition: all 0.2s ease;
   }
   button[type="submit"]:hover {
-    background: #D32F2F;
+    background: var(--accent);
   }
   button[type="submit"]:disabled {
-    opacity: 0.3;
+    opacity: 0.2;
     cursor: default;
   }
   .status {
     font-size: 11px;
-    font-weight: 500;
-    margin-top: 8px;
+    font-style: italic;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    margin-top: 10px;
     color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .status::before {
-    content: "";
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 1s infinite alternate;
+    text-align: center;
   }
   .status.error { color: var(--accent); }
-  .status.error::before { background: var(--accent); }
-  @keyframes pulse {
-    from { opacity: 0.3; }
-    to { opacity: 1; }
-  }
 </style>
 </head>
 <body>
